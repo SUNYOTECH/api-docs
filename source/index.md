@@ -5,6 +5,7 @@ language_tabs:
   - php
   - python
   - javascript
+  - shell
 
 toc_footers:
   - <a href='https://stampery.com/signup'>Sign up to Stampery</a>
@@ -43,11 +44,21 @@ var Stampery = require('stampery'),
     stampery = new Stampery('stamperystampery')
 ```
 
+```shell
+curl -XPOST -H 'Authorization: Basic <base64 of "user:pass">' api.stampery.com/v2/<endpoint>
+```
+
 > Make sure to replace `stamperystampery` with your client secret.
 
 Using your secret token, you can use it to authenticate using the libraries
 
 ## Authenticate via username and password
+
+```shell
+curl -XPOST -H "Content-type: application/json" -d '{"email":"your.email@provider.com", "password":"somepass"}' 'https://api.stampery.com/v2/login'
+```
+
+> Add OTP field if your account has OTP enabled
 
 ### HTTP Request
 
@@ -97,6 +108,10 @@ s.get(hash)
 
 ```javascript
 stampery.get(hash, function(err, stamp) { })
+```
+
+```shell
+curl -XGET -H "Content-type: application/json" 'https://api.stampery.com/v2/stamps/:hash'
 ```
 
 > The above command returns JSON structured like this:
@@ -157,6 +172,10 @@ var data = { str: 'Create a proof of this using the blockchain' }
 stampery.stamp(data, function(err, hash) { })
 ```
 
+```shell
+curl -XPOST -H 'Authorization: Basic <base64 of "user:pass">' -H "Content-type: application/json" -d '{"some":"data"}' 'https://api.stampery.com/v2/stamps'
+```
+
 > The above command returns a JSON object with the proof's hash:
 
 ```json
@@ -197,6 +216,10 @@ var data = {}
 var file = fs.createReadStream('document.txt')
 
 stampery.stamp(data, file, function(err, hash) { })
+```
+
+```shell
+curl -XPOST -H "Content-Type:multipart/form-data" -H "Authorization: Basic <base64 of "user:pass">" -F "file=@file" https://stampery.com/api/v2/stamps
 ```
 
 > The above command returns a JSON object with the proof's hash:
