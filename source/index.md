@@ -50,7 +50,7 @@ curl -XPOST -H 'Authorization: Basic <base64 of "user:pass">' api.stampery.com/v
 
 > Make sure to replace `stamperystampery` with your client secret.
 
-Using your secret token, you can use it to authenticate using the libraries
+Authenticate within the libraries using your secret token
 
 ## Authenticate via username and password
 
