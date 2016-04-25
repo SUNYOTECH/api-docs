@@ -618,3 +618,85 @@ html, body {
     margin-top: $main-padding;
   }
 }
+
+
+
+/**/
+
+body{
+  font-family: lato;
+  font-size: 16px;
+}
+
+.tocify-wrapper{
+  background-color: #4386C9;
+  background-image: linear-gradient(-122deg, #1171CA 2%, #4386C9 91%);
+  border-right: 1px solid #D5D5D5;
+}
+
+.logo_container{
+  width: 100%;
+  height: 80px;
+  background-color: #2A669E;
+  text-align: center;
+  line-height: 80px;
+}
+
+.tocify-wrapper>.search:before {
+    color: #2A669E;
+    top: 11px;
+}
+
+.tocify-wrapper>.search input{
+    margin: 0;
+    width: 100%;
+    padding : 10px 10px 10px 37px;
+    color : #2A669E;
+}
+
+.tocify-wrapper .tocify-item>a, .tocify-wrapper .toc-footer li{
+    padding: 10px 15px;
+    position: relative;
+}
+
+.tocify-wrapper .tocify-item>a{
+  font-weight: normal;
+  color: #BBD6EF;
+}
+
+.tocify-wrapper .tocify-item.tocify-focus>a{
+  color: #fff;
+  font-weight: bold;
+}
+
+.tocify-wrapper .tocify-item.tocify-focus > a:after {
+    display: block;
+    content: "";
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    background: url(images/arrow-r.svg) no-repeat center center;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.tocify-wrapper .tocify-focus{
+    /*box-shadow: 0px 1px 0px #669BCC;*/
+}
+
+#toc ul li{
+    box-shadow: 0px 1px 0px #669BCC;
+}
+
+.tocify-wrapper .toc-footer{
+  border: none;
+}
+
+.tocify-wrapper .tocify-subheader{
+  background: #2A669E !important;
+}
+.page-wrapper .dark-box{
+  border-left: 1px solid #D5D5D5;
+  z-index: 100;
+}
