@@ -2,13 +2,11 @@
 title: API Reference
 
 language_tabs:
-  - php
-  - python
   - javascript
-  - shell
+  - coffeescript
 
 toc_footers:
-  - <a href='https://stampery.com/signup' class='signup'>Sign up to Stampery</a>
+  - <a href='https://api-dashboard.stampery.com' target="_blank" class='signup'>Sign up to Stampery</a>
   - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
@@ -18,226 +16,182 @@ search: true
 ---
 
 # Introduction
+> You can get the latest version of **Stampery API** wrapper for your preferred language:
 
-Welcome to the Stampery API! When you register you'll be able to see, create and delete API keys in your user panel.
+> - Node.js → [https://github.com/stampery/node](https://github.com/stampery/node)
+> - PHP     → *Coming soon*
+> - Python  → *Coming soon*
+> - Elixir  → *Coming soon*
 
-We have language bindings in Shell, PHP, Python and JavaScript! (Ruby coming soon, feel free to start one if you want!) You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+This is the documentation for version 3 of the **Stampery public API**.
+
+We have just released a Node.js language binding, but PHP, Python, Elixir and other ones are coming soon!
+
+You can view code examples in the dark area to the right, and switch the programming language of the examples with the tabs in the top right.
 
 # Authentication
-
-## Authenticate via API key
-
-> To authenticate, use this code:
-
-```php
-$stampery = include('stampery.inc.php');
-$stampery = new Stampery('stamperystampery');
-```
-
-```python
-import stampery
-s = stampery.Client('stamperystampery')
-```
-
 ```javascript
-var Stampery = require('stampery'),
-    stampery = new Stampery('stamperystampery')
+stampery = new Stampery('367c6ec2-5791-4cf5-8094-4bae00c639b4');
+```
+```coffeescript
+stampery = new Stampery '367c6ec2-5791-4cf5-8094-4bae00c639b4'
 ```
 
-```shell
-curl -XPOST -H 'Authorization: Basic <base64 of "user:pass">' api.stampery.com/v2/<endpoint>
+Authentication is performed by using app-specific **secret tokens**.
+
+You can generate your own secret tokens from the [API dashboard](https://api-dashboard.stampery.com).
+
+# Stamping
+
+## Stamping a hash
+```javascript
+var digest = '0989551C2CCE109F40BE2C8AD711E23A\
+539445C93547DFC13D25F9E8147886B8\
+D0E71A16FF4DED1CB4BC6AC2E4BBB572\
+2F0996B24F79FC849531FE70BB2DE800';
+
+stampery.on('proof', function(hash, proof) {
+  console.log('Received proof for hash ' + hash, proof);
+});
+
+stampery.hash(digest);
+```
+```coffeescript
+digest = '0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800'
+
+stampery.on 'proof', (hash, proof) ->
+  console.log "Received proof for hash #{hash}", proof
+
+stampery.stamp digest
 ```
 
-> Make sure to replace `stamperystampery` with your client secret.
+Our API is capable of stamping **SHA3-512** hashes directly.
 
-Authenticate within the libraries using your secret token
+<aside class="info"><strong>SHA3</strong>, a subset of <strong>Keccak</strong>, is the last version of the SHA family of cryptographic hash functions.<br />Our API uses a <strong>512</strong> bits output size, so the hexadecimal digest of all hashes will have a length of 128 characters.</aside>
 
-## Authenticate via username and password
+For stamping a SHA3-512 hash, you only have to make a call to the ``stamp`` method of our API, as seen in the examples to the right.
 
-```shell
-curl -XPOST -H "Content-type: application/json" -d '{"email":"your.email@provider.com", "password":"somepass"}' 'https://api.stampery.com/v2/login'
+## Stamping a file
+```javascript
+stampery.on('proof', function(hash, proof) {
+  console.log('Received proof for hash ' + hash, proof);
+});
+
+fs.readFile('/etc/hosts', 'utf8', function(err, data) {
+  stampery.hash(data, stampery.stamp);
+});
+```
+```coffeescript
+stampery.on 'proof', (hash, proof) ->
+  console.log "Received proof for hash #{hash}", proof
+
+fs.readFile '/etc/hosts', 'utf8', (err, data) ->
+  stampery.hash data, stampery.stamp
 ```
 
-> Add OTP field if your account has OTP enabled
+Stamping a file is as easy as obtaining its **SHA3-512** hash and then stamping the hash as explained in the previous section.
 
-### HTTP Request
+For your convenience, all our language bindings include a function for hashing files as seen in the examples to the right.
 
-> JSON returned by this API endpoint
+# Proofs
 
-```json
-{
-  "api_token": {
-    "name": "Token Name",
-    "clientId": "Client ID",
-    "secretToken": "Secret Token"
+## Proof format
+This is the structure of a proof:
+
+<aside class="info">[v, s, r, [c, t]]</aside>
+
+Where `v`, `s`, `r`, `c` and `t` are:
+
+| Key | Description | Value type |
+|-----|--------------------------------------|-------------|
+| v | BTA version used. | Integer(1) |
+| s | Merkle siblings. | Array |
+| r | Merkle root. | String(128) |
+| c | Chain code. | Integer(1) |
+| t | Transaction ID (txid) | String(64) |
+
+Valid chain codes for ``c`` are:
+
+| Value | Chain |
+|-------|-------|
+| 1 | Bitcoin livenet |
+| 2 | Ethererum livenet |
+
+## Retrieving missed proofs
+```javascript
+stampery.on('proof', function(hash, proof) {
+  console.log('Received missed proof for hash ' + hash, proof);
+});
+
+stampery.receiveMissedProofs();
+```
+```coffeescript
+stampery.on 'proof', (hash, proof) ->
+  console.log "Received missed proof for hash #{hash}", proof
+
+stampery.receiveMissedProofs()
+```
+If you make a stamp and for some reason disconnect from our service right after, you will miss the proof.
+
+Don't worry, **missed proofs are queued in our servers for 24h**, and you can retrieve them by making a simple call to the ``receiveMissedProofs`` method.
+
+## Checking a proof (proving)
+```javascript
+var mix = function (a, b) {
+  if (b > a){
+    [a, b] = [b, a];
+  }
+  sha3 = new (SHA3.SHA3Hash)();
+  sha3.update(data);
+  return sha3.digest('hex').toUpperCase();
+}
+
+var prove = function (hash, siblings, root) {
+  if (siblings.length > 0) {
+    head = siblings[0];
+    tail = siblings.slice(1);
+    hash = mix(hash, head);
+    return prove(hash, tail, root);
+  } else {
+    return hash == root
   }
 }
+
+console.log(prove(digest, s, r) && 'Valid!' && 'Wrong!');
 ```
+```coffeescript
+mix = (a, b) ->
+  if b > a
+    [a, b] = [b, a]
+  sha3 = new (SHA3.SHA3Hash)
+  sha3.update data
+  sha3.digest('hex').toUpperCase()
 
-`POST https://stampery.com/api/v2/login`
+prove = (hash, siblings, root) ->
+  if siblings.length > 0
+    head = siblings[0]
+    tail = siblings.slice(1)
+    hash = mix(hash, head)
+    prove hash, tail, root
+  else
+    hash == root
 
-### JSON body
-
-Parameter | Description
---------- | -----------
-username | Your username
-password | Your password
-otp | In case your account has an OTP token set, put it here
-
-## Authenticate via HTTP header
-
-The Stampery API uses a token pair with a client ID and a client secret. You can authenticate with just the client secret (as seen in the PHP, Python and Node libraries) and username & password. The method used is by sending an HTTP Authorization header with the client ID and the client secret, in the next way:
-
-`Authorization: client_id:client_secret`
-
-<aside class="notice">
-You must replace <code>client_id:client_secret</code> with your key and secret.
-</aside>
-
-# Stamps
-
-## Retrieve a specific stamps 
-
-```php
-$stampery->get($hash);
+console.log prove(digest, s, r) and 'Valid!' and 'Wrong!'
 ```
+We call **proving** to the process of verifying a proof is valid and therefore demonstrating a hash or file has been undoubtfully embedded in the blockchain and it has not been tampered since then.
 
-```python
-s.get(hash)
-```
+Proofs are independently verifiable by everyone in possesion of the hash or file and the proof itself.
 
-```javascript
-stampery.get(hash, function(err, stamp) { })
-```
+For Stampery proofs made with the current version 5 of our BTA platform, the process of proving is made like this:
 
-```shell
-curl -XGET -H "Content-type: application/json" 'https://api.stampery.com/v2/stamps/:hash'
-```
+1. Take the hash
+2. Take first element in the Merkle siblings list `s[0]`
+3. Concatenate both, putting the biggest of them in front
+4. Hash the resulting string with `SHA3-512`
+5. Take the resulting hash and the next element in the Merkle siblings list, concatenate like before and hash the resulting string
+6. Repeat same process until there are no elements left in the Merkle siblings list
+7. Check the resuting string matches the Merkle root of the proof, `r`
+8. Take the transaction ID, `t`, and paste in your favorite Bitcoin/Ethereum chain explorer
+9. Check that the Merkle root, `r`, matches the tail of the data embedded in the transaction
 
-> The above command returns JSON structured like this:
-
-```json
-{
-  "v": 3,
-  "data": {
-    "owners": [
-      {
-        "email": "owner1@email.com",
-        "name": "Owner 1"
-      }
-    ],
-    "size": "1024",
-    "name": "ImportantContract.pdf",
-    "hash": "c65e0cc54186376e5026e16c5c59f8ef69dd745d29fc743b8033b6bcd1fc88d6"
-  },
-  "proof": {
-    "hash": "e6f064f4f5b5041d24e8e43a5bba7e81367d435709ba473c578dc2b4b1b8ddb0",
-    "merkleIndex": 0,
-    "merkleSiblings": [
-      "7dc47952c0bc99f61ee863018f52711d0ac4031afb1578db6cc3e9c990d1172b",
-      "0fff49490d879d809cb1f57972beb9f3293f7509cd8bd4eb02986a0eca4adb10",
-      "eea53b2e51b72781c95e87f3c98741ca1bc1196bd7bf700c3fb06ebce1af3382",
-      "fef2371e7183475b7b181459d831a62380f4c03d4ff38b5e216ea7d3c3f44f13",
-      "9eba1796584f80b7f22b648e37423f6bceeb4d06a278b8981c34ef09e1cfe57a",
-      "5604dc31a496b7cf0cbcf7b5d22a6a3f5f23b70bbfa681b0c53214f8fea3d913",
-      0
-    ],
-    "merkleRoot": "fe4354290480da434e25b3f614bc9953ed41b3fd2799db821b1f1317323ea2ba",
-    "txid": "31f410d6843496300382a6b001a482e21d20f111bf781bd695d8ffe0e46cd4b8"
-  }
-}
-```
-
-This endpoint retrieves a stamp providing the hash.
-
-### HTTP Request
-
-`GET https://stampery.com/api/v2/stamps/:hash`
-
-## Stamp data
-
-```php
-$data = array( 'str' => 'Create a proof of this using the blockchain' );
-
-$stampery->stamp($data);
-```
-
-```python
-s.stamp({'str': 'Create a proof of this using the blockchain'})
-```
-
-```javascript
-var data = { str: 'Create a proof of this using the blockchain' }
-
-stampery.stamp(data, function(err, hash) { })
-```
-
-```shell
-curl -XPOST -H 'Authorization: Basic <base64 of "user:pass">' -H "Content-type: application/json" -d '{"some":"data"}' 'https://api.stampery.com/v2/stamps'
-```
-
-> The above command returns a JSON object with the proof's hash:
-
-```json
-{
-  "hash": "e6f064f4f5b5041d24e8e43a5bba7e81367d43709ba473c578dc2b4b1b8ddb0"
-}
-```
-
-<aside class="warning">In order to stamp you need to be authenticated with a client secret key</aside>
-
-### HTTP Request
-
-`POST https://stampery.com/api/v2/stamps`
-
-### JSON body
-
-Parameter | Description
---------- | -----------
-data | The data to stamp (totally arbitrary as long as it's valid JSON)
-
-## Stamp a file
-
-```php
-$data = array();
-$file = fopen('document.txt', 'r');
-
-$stampery->stamp($data, $file);
-```
-
-```python
-file = open('/Users/user/Desktop/Artboard 2.png', 'rb')
-
-s.stamp({'meta': 'data'}, file)
-```
-
-```javascript
-var data = {}
-var file = fs.createReadStream('document.txt')
-
-stampery.stamp(data, file, function(err, hash) { })
-```
-
-```shell
-curl -XPOST -H "Content-Type:multipart/form-data" -H "Authorization: Basic <base64 of "user:pass">" -F "file=@file" https://stampery.com/api/v2/stamps
-```
-
-> The above command returns a JSON object with the proof's hash:
-
-```json
-{
-  "hash": "e6f064f4f5b5041d24e8e43a5ba7e81367d435709ba473c578dc2b4b1b8ddb0"
-}
-```
-
-<aside class="warning">In order to stamp you need to be authenticated with a client secret key</aside>
-
-### HTTP Request
-
-`POST https://stampery.com/api/v2/stamps`
-
-This will be a multipart form, sending the file as the `file` parameter:
-
-Parameter | Description
---------- | -----------
-data | Extra metadata for the file (not needed to stamp a file)
+If the checks in steps **7** and **9** pass, then you have proved that the proof is OK and the hash or file has not been tampered.
