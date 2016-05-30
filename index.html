@@ -13,7 +13,7 @@
 
       <script>
         $(function() {
-          setupLanguages(["php","python","javascript","shell"]);
+          setupLanguages(["javascript","coffeescript"]);
         });
       </script>
     <script>
@@ -41,10 +41,8 @@
         <img src="images/logo.svg" />
       </div>
         <div class="lang-selector">
-              <a href="#" data-language-name="php">php</a>
-              <a href="#" data-language-name="python">python</a>
               <a href="#" data-language-name="javascript">javascript</a>
-              <a href="#" data-language-name="shell">shell</a>
+              <a href="#" data-language-name="coffeescript">coffeescript</a>
         </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
@@ -53,7 +51,7 @@
       <div id="toc">
       </div>
         <ul class="toc-footer">
-            <li><a href='https://stampery.com/signup' class='signup'>Sign up to Stampery</a></li>
+            <li><a href='https://api-dashboard.stampery.com' target="_blank" class='signup'>Sign up to Stampery</a></li>
             <li><a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
         </ul>
     </div>
@@ -62,260 +60,228 @@
       <div class="content">
         <h1 id="introduction">Introduction</h1>
 
-<p>Welcome to the Stampery API! When you register you&rsquo;ll be able to see, create and delete API keys in your user panel.</p>
+<blockquote>
+<p>You can get the latest version of <strong>Stampery API</strong> wrapper for your preferred language:</p>
 
-<p>We have language bindings in Shell, PHP, Python and JavaScript! (Ruby coming soon, feel free to start one if you want!) You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
+<ul>
+<li>Node.js → <a href="https://github.com/stampery/node">https://github.com/stampery/node</a></li>
+<li>PHP     → <em>Coming soon</em></li>
+<li>Python  → <em>Coming soon</em></li>
+<li>Elixir  → <em>Coming soon</em></li>
+</ul>
+</blockquote>
+
+<p>This is the documentation for version 3 of the <strong>Stampery public API</strong>.</p>
+
+<p>We have just released a Node.js language binding, but PHP, Python, Elixir and other ones are coming soon!</p>
+
+<p>You can view code examples in the dark area to the right, and switch the programming language of the examples with the tabs in the top right.</p>
 
 <h1 id="authentication">Authentication</h1>
-
-<h2 id="authenticate-via-api-key">Authenticate via API key</h2>
-
-<blockquote>
-<p>To authenticate, use this code:</p>
-</blockquote>
-<pre class="highlight php"><code>$stampery = include('stampery.inc.php');
-$stampery = new Stampery('stamperystampery');
+<pre class="highlight javascript"><code><span class="nx">stampery</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Stampery</span><span class="p">(</span><span class="s1">'367c6ec2-5791-4cf5-8094-4bae00c639b4'</span><span class="p">);</span>
 </code></pre>
-<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">stampery</span>
-<span class="n">s</span> <span class="o">=</span> <span class="n">stampery</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="s">'stamperystampery'</span><span class="p">)</span>
-</code></pre>
-<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">Stampery</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'stampery'</span><span class="p">),</span>
-    <span class="nx">stampery</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Stampery</span><span class="p">(</span><span class="s1">'stamperystampery'</span><span class="p">)</span>
-</code></pre>
-<pre class="highlight shell"><code>curl -XPOST -H <span class="s1">'Authorization: Basic &lt;base64 of "user:pass"&gt;'</span> api.stampery.com/v2/&lt;endpoint&gt;
+<pre class="highlight coffeescript"><code><span class="nx">stampery</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Stampery</span> <span class="s">'367c6ec2-5791-4cf5-8094-4bae00c639b4'</span>
 </code></pre>
 
-<blockquote>
-<p>Make sure to replace <code class="prettyprint">stamperystampery</code> with your client secret.</p>
-</blockquote>
+<p>Authentication is performed by using app-specific <strong>secret tokens</strong>.</p>
 
-<p>Authenticate within the libraries using your secret token</p>
+<p>You can generate your own secret tokens from the <a href="https://api-dashboard.stampery.com">API dashboard</a>.</p>
 
-<h2 id="authenticate-via-username-and-password">Authenticate via username and password</h2>
-<pre class="highlight shell"><code>curl -XPOST -H <span class="s2">"Content-type: application/json"</span> -d <span class="s1">'{"email":"your.email@provider.com", "password":"somepass"}'</span> <span class="s1">'https://api.stampery.com/v2/login'</span>
+<h1 id="stamping">Stamping</h1>
+
+<h2 id="stamping-a-hash">Stamping a hash</h2>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">digest</span> <span class="o">=</span> <span class="s1">'0989551C2CCE109F40BE2C8AD711E23A\
+539445C93547DFC13D25F9E8147886B8\
+D0E71A16FF4DED1CB4BC6AC2E4BBB572\
+2F0996B24F79FC849531FE70BB2DE800'</span><span class="p">;</span>
+
+<span class="nx">stampery</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'proof'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">proof</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Received proof for hash '</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">proof</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">stampery</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">digest</span><span class="p">);</span>
+</code></pre>
+<pre class="highlight coffeescript"><code><span class="nx">digest</span> <span class="o">=</span> <span class="s">'0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800'</span>
+
+<span class="nx">stampery</span><span class="p">.</span><span class="na">on</span> <span class="s">'proof'</span><span class="p">,</span> <span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">proof</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nx">console</span><span class="p">.</span><span class="na">log</span> <span class="s">"Received proof for hash </span><span class="si">#{</span><span class="nx">hash</span><span class="si">}</span><span class="s">"</span><span class="p">,</span> <span class="nx">proof</span>
+
+<span class="nx">stampery</span><span class="p">.</span><span class="na">stamp</span> <span class="nx">digest</span>
 </code></pre>
 
-<blockquote>
-<p>Add OTP field if your account has OTP enabled</p>
-</blockquote>
+<p>Our API is capable of stamping <strong>SHA3-512</strong> hashes directly.</p>
 
-<h3 id="http-request">HTTP Request</h3>
+<aside class="info"><strong>SHA3</strong>, a subset of <strong>Keccak</strong>, is the last version of the SHA family of cryptographic hash functions.<br />Our API uses a <strong>512</strong> bits output size, so the hexadecimal digest of all hashes will have a length of 128 characters.</aside>
 
-<blockquote>
-<p>JSON returned by this API endpoint</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"api_token"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Token Name"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"clientId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Client ID"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"secretToken"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Secret Token"</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
+<p>For stamping a SHA3-512 hash, you only have to make a call to the <code class="prettyprint">stamp</code> method of our API, as seen in the examples to the right.</p>
 
-<p><code class="prettyprint">POST https://stampery.com/api/v2/login</code></p>
+<h2 id="stamping-a-file">Stamping a file</h2>
+<pre class="highlight javascript"><code><span class="nx">stampery</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'proof'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">proof</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Received proof for hash '</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">proof</span><span class="p">);</span>
+<span class="p">});</span>
 
-<h3 id="json-body">JSON body</h3>
+<span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="s1">'/etc/hosts'</span><span class="p">,</span> <span class="s1">'utf8'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">stampery</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">stampery</span><span class="p">.</span><span class="nx">stamp</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre>
+<pre class="highlight coffeescript"><code><span class="nx">stampery</span><span class="p">.</span><span class="na">on</span> <span class="s">'proof'</span><span class="p">,</span> <span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">proof</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nx">console</span><span class="p">.</span><span class="na">log</span> <span class="s">"Received proof for hash </span><span class="si">#{</span><span class="nx">hash</span><span class="si">}</span><span class="s">"</span><span class="p">,</span> <span class="nx">proof</span>
+
+<span class="nx">fs</span><span class="p">.</span><span class="na">readFile</span> <span class="s">'/etc/hosts'</span><span class="p">,</span> <span class="s">'utf8'</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nx">stampery</span><span class="p">.</span><span class="na">hash</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">stampery</span><span class="p">.</span><span class="na">stamp</span>
+</code></pre>
+
+<p>Stamping a file is as easy as obtaining its <strong>SHA3-512</strong> hash and then stamping the hash as explained in the previous section.</p>
+
+<p>For your convenience, all our language bindings include a function for hashing files as seen in the examples to the right.</p>
+
+<h1 id="proofs">Proofs</h1>
+
+<h2 id="proof-format">Proof format</h2>
+
+<p>This is the structure of a proof:</p>
+
+<aside class="info">[v, s, r, [c, t]]</aside>
+
+<p>Where <code class="prettyprint">v</code>, <code class="prettyprint">s</code>, <code class="prettyprint">r</code>, <code class="prettyprint">c</code> and <code class="prettyprint">t</code> are:</p>
 
 <table><thead>
 <tr>
-<th>Parameter</th>
+<th>Key</th>
 <th>Description</th>
+<th>Value type</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>username</td>
-<td>Your username</td>
+<td>v</td>
+<td>BTA version used.</td>
+<td>Integer(1)</td>
 </tr>
 <tr>
-<td>password</td>
-<td>Your password</td>
+<td>s</td>
+<td>Merkle siblings.</td>
+<td>Array</td>
 </tr>
 <tr>
-<td>otp</td>
-<td>In case your account has an OTP token set, put it here</td>
+<td>r</td>
+<td>Merkle root.</td>
+<td>String(128)</td>
+</tr>
+<tr>
+<td>c</td>
+<td>Chain code.</td>
+<td>Integer(1)</td>
+</tr>
+<tr>
+<td>t</td>
+<td>Transaction ID (txid)</td>
+<td>String(64)</td>
 </tr>
 </tbody></table>
 
-<h2 id="authenticate-via-http-header">Authenticate via HTTP header</h2>
-
-<p>The Stampery API uses a token pair with a client ID and a client secret. You can authenticate with just the client secret (as seen in the PHP, Python and Node libraries) and username &amp; password. The method used is by sending an HTTP Authorization header with the client ID and the client secret, in the next way:</p>
-
-<p><code class="prettyprint">Authorization: client_id:client_secret</code></p>
-
-<aside class="notice">
-You must replace <code>client_id:client_secret</code> with your key and secret.
-</aside>
-
-<h1 id="stamps">Stamps</h1>
-
-<h2 id="retrieve-a-specific-stamps">Retrieve a specific stamps</h2>
-<pre class="highlight php"><code>$stampery-&gt;get($hash);
-</code></pre>
-<pre class="highlight python"><code><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">hash</span><span class="p">)</span>
-</code></pre>
-<pre class="highlight javascript"><code><span class="nx">stampery</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">stamp</span><span class="p">)</span> <span class="p">{</span> <span class="p">})</span>
-</code></pre>
-<pre class="highlight shell"><code>curl -XGET -H <span class="s2">"Content-type: application/json"</span> <span class="s1">'https://api.stampery.com/v2/stamps/:hash'</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"v"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"owners"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="p">{</span><span class="w">
-        </span><span class="nt">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"owner1@email.com"</span><span class="p">,</span><span class="w">
-        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Owner 1"</span><span class="w">
-      </span><span class="p">}</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nt">"size"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1024"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ImportantContract.pdf"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"hash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"c65e0cc54186376e5026e16c5c59f8ef69dd745d29fc743b8033b6bcd1fc88d6"</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="nt">"proof"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"hash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e6f064f4f5b5041d24e8e43a5bba7e81367d435709ba473c578dc2b4b1b8ddb0"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"merkleIndex"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"merkleSiblings"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"7dc47952c0bc99f61ee863018f52711d0ac4031afb1578db6cc3e9c990d1172b"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"0fff49490d879d809cb1f57972beb9f3293f7509cd8bd4eb02986a0eca4adb10"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"eea53b2e51b72781c95e87f3c98741ca1bc1196bd7bf700c3fb06ebce1af3382"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"fef2371e7183475b7b181459d831a62380f4c03d4ff38b5e216ea7d3c3f44f13"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"9eba1796584f80b7f22b648e37423f6bceeb4d06a278b8981c34ef09e1cfe57a"</span><span class="p">,</span><span class="w">
-      </span><span class="s2">"5604dc31a496b7cf0cbcf7b5d22a6a3f5f23b70bbfa681b0c53214f8fea3d913"</span><span class="p">,</span><span class="w">
-      </span><span class="mi">0</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nt">"merkleRoot"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fe4354290480da434e25b3f614bc9953ed41b3fd2799db821b1f1317323ea2ba"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"txid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"31f410d6843496300382a6b001a482e21d20f111bf781bd695d8ffe0e46cd4b8"</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>This endpoint retrieves a stamp providing the hash.</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">GET https://stampery.com/api/v2/stamps/:hash</code></p>
-
-<h2 id="stamp-data">Stamp data</h2>
-<pre class="highlight php"><code>$data = array( 'str' =&gt; 'Create a proof of this using the blockchain' );
-
-$stampery-&gt;stamp($data);
-</code></pre>
-<pre class="highlight python"><code><span class="n">s</span><span class="o">.</span><span class="n">stamp</span><span class="p">({</span><span class="s">'str'</span><span class="p">:</span> <span class="s">'Create a proof of this using the blockchain'</span><span class="p">})</span>
-</code></pre>
-<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span> <span class="na">str</span><span class="p">:</span> <span class="s1">'Create a proof of this using the blockchain'</span> <span class="p">}</span>
-
-<span class="nx">stampery</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">hash</span><span class="p">)</span> <span class="p">{</span> <span class="p">})</span>
-</code></pre>
-<pre class="highlight shell"><code>curl -XPOST -H <span class="s1">'Authorization: Basic &lt;base64 of "user:pass"&gt;'</span> -H <span class="s2">"Content-type: application/json"</span> -d <span class="s1">'{"some":"data"}'</span> <span class="s1">'https://api.stampery.com/v2/stamps'</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns a JSON object with the proof&rsquo;s hash:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"hash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e6f064f4f5b5041d24e8e43a5bba7e81367d43709ba473c578dc2b4b1b8ddb0"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<aside class="warning">In order to stamp you need to be authenticated with a client secret key</aside>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">POST https://stampery.com/api/v2/stamps</code></p>
-
-<h3 id="json-body">JSON body</h3>
+<p>Valid chain codes for <code class="prettyprint">c</code> are:</p>
 
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Description</th>
+<th>Value</th>
+<th>Chain</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>data</td>
-<td>The data to stamp (totally arbitrary as long as it&rsquo;s valid JSON)</td>
+<td>1</td>
+<td>Bitcoin livenet</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Ethererum livenet</td>
 </tr>
 </tbody></table>
 
-<h2 id="stamp-a-file">Stamp a file</h2>
-<pre class="highlight php"><code>$data = array();
-$file = fopen('document.txt', 'r');
+<h2 id="retrieving-missed-proofs">Retrieving missed proofs</h2>
+<pre class="highlight javascript"><code><span class="nx">stampery</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'proof'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">proof</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Received missed proof for hash '</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">proof</span><span class="p">);</span>
+<span class="p">});</span>
 
-$stampery-&gt;stamp($data, $file);
+<span class="nx">stampery</span><span class="p">.</span><span class="nx">receiveMissedProofs</span><span class="p">();</span>
 </code></pre>
-<pre class="highlight python"><code><span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">'/Users/user/Desktop/Artboard 2.png'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span>
+<pre class="highlight coffeescript"><code><span class="nx">stampery</span><span class="p">.</span><span class="na">on</span> <span class="s">'proof'</span><span class="p">,</span> <span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">proof</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nx">console</span><span class="p">.</span><span class="na">log</span> <span class="s">"Received missed proof for hash </span><span class="si">#{</span><span class="nx">hash</span><span class="si">}</span><span class="s">"</span><span class="p">,</span> <span class="nx">proof</span>
 
-<span class="n">s</span><span class="o">.</span><span class="n">stamp</span><span class="p">({</span><span class="s">'meta'</span><span class="p">:</span> <span class="s">'data'</span><span class="p">},</span> <span class="nb">file</span><span class="p">)</span>
-</code></pre>
-<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="kd">var</span> <span class="nx">file</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">createReadStream</span><span class="p">(</span><span class="s1">'document.txt'</span><span class="p">)</span>
-
-<span class="nx">stampery</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">hash</span><span class="p">)</span> <span class="p">{</span> <span class="p">})</span>
-</code></pre>
-<pre class="highlight shell"><code>curl -XPOST -H <span class="s2">"Content-Type:multipart/form-data"</span> -H <span class="s2">"Authorization: Basic &lt;base64 of "</span>user:pass<span class="s2">"&gt;"</span> -F <span class="s2">"file=@file"</span> https://stampery.com/api/v2/stamps
+<span class="nx">stampery</span><span class="p">.</span><span class="na">receiveMissedProofs</span><span class="p">()</span>
 </code></pre>
 
-<blockquote>
-<p>The above command returns a JSON object with the proof&rsquo;s hash:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"hash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e6f064f4f5b5041d24e8e43a5ba7e81367d435709ba473c578dc2b4b1b8ddb0"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
+<p>If you make a stamp and for some reason disconnect from our service right after, you will miss the proof.</p>
 
-<aside class="warning">In order to stamp you need to be authenticated with a client secret key</aside>
+<p>Don&rsquo;t worry, <strong>missed proofs are queued in our servers for 24h</strong>, and you can retrieve them by making a simple call to the <code class="prettyprint">receiveMissedProofs</code> method.</p>
 
-<h3 id="http-request">HTTP Request</h3>
+<h2 id="checking-a-proof-proving">Checking a proof (proving)</h2>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">mix</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">b</span> <span class="o">&gt;</span> <span class="nx">a</span><span class="p">){</span>
+    <span class="p">[</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">b</span><span class="p">,</span> <span class="nx">a</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="nx">sha3</span> <span class="o">=</span> <span class="k">new</span> <span class="p">(</span><span class="nx">SHA3</span><span class="p">.</span><span class="nx">SHA3Hash</span><span class="p">)();</span>
+  <span class="nx">sha3</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">sha3</span><span class="p">.</span><span class="nx">digest</span><span class="p">(</span><span class="s1">'hex'</span><span class="p">).</span><span class="nx">toUpperCase</span><span class="p">();</span>
+<span class="p">}</span>
 
-<p><code class="prettyprint">POST https://stampery.com/api/v2/stamps</code></p>
+<span class="kd">var</span> <span class="nx">prove</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">siblings</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">siblings</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">head</span> <span class="o">=</span> <span class="nx">siblings</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="nx">tail</span> <span class="o">=</span> <span class="nx">siblings</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nx">hash</span> <span class="o">=</span> <span class="nx">mix</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">head</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">prove</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">tail</span><span class="p">,</span> <span class="nx">root</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">hash</span> <span class="o">==</span> <span class="nx">root</span>
+  <span class="p">}</span>
+<span class="p">}</span>
 
-<p>This will be a multipart form, sending the file as the <code class="prettyprint">file</code> parameter:</p>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">prove</span><span class="p">(</span><span class="nx">digest</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="s1">'Valid!'</span> <span class="o">&amp;&amp;</span> <span class="s1">'Wrong!'</span><span class="p">);</span>
+</code></pre>
+<pre class="highlight coffeescript"><code><span class="nx">mix</span> <span class="o">=</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="k">if</span> <span class="nx">b</span> <span class="o">&gt;</span> <span class="nx">a</span>
+    <span class="p">[</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">b</span><span class="p">,</span> <span class="nx">a</span><span class="p">]</span>
+  <span class="nx">sha3</span> <span class="o">=</span> <span class="k">new</span> <span class="p">(</span><span class="nx">SHA3</span><span class="p">.</span><span class="na">SHA3Hash</span><span class="p">)</span>
+  <span class="nx">sha3</span><span class="p">.</span><span class="na">update</span> <span class="nx">data</span>
+  <span class="nx">sha3</span><span class="p">.</span><span class="na">digest</span><span class="p">(</span><span class="s">'hex'</span><span class="p">).</span><span class="na">toUpperCase</span><span class="p">()</span>
 
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>data</td>
-<td>Extra metadata for the file (not needed to stamp a file)</td>
-</tr>
-</tbody></table>
+<span class="nx">prove</span> <span class="o">=</span> <span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">siblings</span><span class="p">,</span> <span class="nx">root</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="k">if</span> <span class="nx">siblings</span><span class="p">.</span><span class="na">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="nx">head</span> <span class="o">=</span> <span class="nx">siblings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nx">tail</span> <span class="o">=</span> <span class="nx">siblings</span><span class="p">.</span><span class="na">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nx">hash</span> <span class="o">=</span> <span class="nx">mix</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">head</span><span class="p">)</span>
+    <span class="nx">prove</span> <span class="nx">hash</span><span class="p">,</span> <span class="nx">tail</span><span class="p">,</span> <span class="nx">root</span>
+  <span class="k">else</span>
+    <span class="nx">hash</span> <span class="o">==</span> <span class="nx">root</span>
 
-          <h1 id="errors">Errors</h1>
+<span class="nx">console</span><span class="p">.</span><span class="na">log</span> <span class="nx">prove</span><span class="p">(</span><span class="nx">digest</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span> <span class="o">and</span> <span class="s">'Valid!'</span> <span class="o">and</span> <span class="s">'Wrong!'</span>
+</code></pre>
 
-<table><thead>
-<tr>
-<th>Error Code</th>
-<th>Meaning</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>404</td>
-<td>Stamp not found</td>
-</tr>
-<tr>
-<td>408</td>
-<td>Payment needed &ndash; your free account has reached the limits</td>
-</tr>
-<tr>
-<td>409</td>
-<td>Duplicated &ndash; the stamp is duplicated</td>
-</tr>
-</tbody></table>
+<p>We call <strong>proving</strong> to the process of verifying a proof is valid and therefore demonstrating a hash or file has been undoubtfully embedded in the blockchain and it has not been tampered since then.</p>
 
+<p>Proofs are independently verifiable by everyone in possesion of the hash or file and the proof itself.</p>
+
+<p>For Stampery proofs made with the current version 5 of our BTA platform, the process of proving is made like this:</p>
+
+<ol>
+<li>Take the hash</li>
+<li>Take first element in the Merkle siblings list <code class="prettyprint">s[0]</code></li>
+<li>Concatenate both, putting the biggest of them in front</li>
+<li>Hash the resulting string with <code class="prettyprint">SHA3-512</code></li>
+<li>Take the resulting hash and the next element in the Merkle siblings list, concatenate like before and hash the resulting string</li>
+<li>Repeat same process until there are no elements left in the Merkle siblings list</li>
+<li>Check the resuting string matches the Merkle root of the proof, <code class="prettyprint">r</code></li>
+<li>Take the transaction ID, <code class="prettyprint">t</code>, and paste in your favorite Bitcoin/Ethereum chain explorer</li>
+<li>Check that the Merkle root, <code class="prettyprint">r</code>, matches the tail of the data embedded in the transaction</li>
+</ol>
+
+<p>If the checks in steps <strong>7</strong> and <strong>9</strong> pass, then you have proved that the proof is OK and the hash or file has not been tampered.</p>
+
+          
       </div>
       <div class="dark-box">
           <div class="lang-selector">
-                <a href="#" data-language-name="php">php</a>
-                <a href="#" data-language-name="python">python</a>
                 <a href="#" data-language-name="javascript">javascript</a>
-                <a href="#" data-language-name="shell">shell</a>
+                <a href="#" data-language-name="coffeescript">coffeescript</a>
           </div>
       </div>
     </div>
