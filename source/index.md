@@ -4,6 +4,10 @@ title: API Reference
 language_tabs:
   - javascript
   - coffeescript
+  - php
+  - python
+  - elixir
+  - ruby
 
 toc_footers:
   - <a href='https://api-dashboard.stampery.com' target="_blank" class='signup'>Sign up to Stampery</a>
@@ -19,9 +23,11 @@ search: true
 > You can get the latest version of **Stampery API** wrapper for your preferred language:
 
 > - Node.js → [https://github.com/stampery/node](https://github.com/stampery/node)
-> - PHP     → *Coming soon*
-> - Python  → *Coming soon*
-> - Elixir  → *Coming soon*
+> - PHP → [https://github.com/stampery/php](https://github.com/stampery/php)
+> - Python  → [https://github.com/stampery/python](https://github.com/stampery/python)
+> - Elixir  → [https://github.com/stampery/elixir](https://github.com/stampery/elixir)
+> - Ruby    → [https://github.com/stampery/ruby](https://github.com/stampery/ruby)
+
 
 This is the documentation for version 3 of the **Stampery public API**.
 
@@ -35,6 +41,23 @@ stampery = new Stampery('367c6ec2-5791-4cf5-8094-4bae00c639b4');
 ```
 ```coffeescript
 stampery = new Stampery '367c6ec2-5791-4cf5-8094-4bae00c639b4'
+```
+```php
+<?
+$stampery = include('stampery.inc.php');
+$stampery = new Stampery('830fa1bf-bee7-4412-c1d3-31dddba2213d');
+```
+```python
+from stampery import Stampery
+client = Stampery('2d4cdee7-38b0-4a66-da87-c1ab05b43768', 'prod')
+```
+```elixir
+require Stampery
+Stampery.init "2d4cdee7-38b0-4a66-da87-c1ab05b43768"
+```
+```ruby
+require 'stampery'
+stampery = Client.new '2d4cdee7-38b0-4a66-da87-c1ab05b43768'
 ```
 
 Authentication is performed by using app-specific **secret tokens**.
@@ -64,6 +87,23 @@ stampery.on 'proof', (hash, proof) ->
 
 stampery.stamp digest
 ```
+```php
+<?
+$digest = 'A69F73CCA23A9AC5C8B567DC185A756E97C982164FE25859E0D1DCC1475C80A615B2123AF1F5F94C11E3E9402C3AC558F500199D95B6D3E301758586281DCD26';
+$stampery->stamp($digest);
+```
+```python
+digest = "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"
+client.stamp(digest)
+```
+```elixir
+digest = "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"
+Stampery.stamp digest
+```
+```ruby
+digest = "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"
+stampery.stamp digest
+```
 
 Our API is capable of stamping **SHA3-512** hashes directly.
 
@@ -87,6 +127,55 @@ stampery.on 'proof', (hash, proof) ->
 
 fs.readFile '/etc/hosts', 'utf8', (err, data) ->
   stampery.hash data, stampery.stamp
+```
+```php
+<?
+$stampery.on('proof', function(hash, proof){
+ echo("Received proof for hash" . $hash . "\n");
+ echo("Protocol version: " . $proof[0] . "\n");
+ echo("Merkle siblings:"\n");
+ var_dump($proof[1]);
+ echo("Merkle root: " . $proof[2] . "\n");
+ echo("Blockchain: " . array('Bitcoin', 'Ethereum')[$proof[3][0]] . "\n");
+ echo("Transaction ID: " . $proof[3][1] . "\n");
+});
+
+$file = file_get_contents('/path/to/file.txt');
+$digest = $stampery->hash($file);
+$stampery->stamp($digest);
+```
+```python
+def on_proof(hash, proof):
+    print("Received proof for")
+    print(hash)
+    print("Proof")
+    print(proof)
+
+file = open("/path/to/file.txt")
+digest = client.hash(file.read())
+client.stamp(digest)
+```
+```elixir
+Stampery.on :proof, fn [hash, proof] ->
+    IO.puts "\nReceived proof for \n#{hash} \n\nProof"
+    IO.inspect proof
+end
+
+{:ok, data} = File.read "/path/to/file.txt"
+digest = Stampery.hash data
+Stampery.stamp digest
+```
+```ruby
+stampery.on :proof do |hash, proof|
+  puts 'Received proof for'
+  puts hash
+  puts 'Proof'
+  puts proof.to_s
+end
+
+data = File.read "/path/to/file.txt"
+digest = stampery.hash data
+stampery.stamp digest
 ```
 
 Stamping a file is as easy as obtaining its **SHA3-512** hash and then stamping the hash as explained in the previous section.
