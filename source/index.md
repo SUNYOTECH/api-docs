@@ -8,6 +8,7 @@ language_tabs:
   - python
   - elixir
   - ruby
+  - java
 
 toc_footers:
   - <a href='https://api-dashboard.stampery.com/signup' target="_blank" class='signup'>Sign up</a>
@@ -64,6 +65,13 @@ Stampery.init "2d4cdee7-38b0-4a66-da87-c1ab05b43768"
 require 'stampery'
 stampery = Client.new '2d4cdee7-38b0-4a66-da87-c1ab05b43768'
 ```
+```java
+import com.stampery.Stampery;
+
+Stampery stampery = new Stampery("2d4cdee7-38b0-4a66-da87-c1ab05b43768");
+stampery.subscribe(this);      
+stampery.start();
+```
 
 Authentication is performed by using app-specific **secret tokens**.
 
@@ -110,6 +118,10 @@ Stampery.stamp digest
 ```ruby
 digest = "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"
 stampery.stamp digest
+```
+```java
+String digest = "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800";
+stampery.stamp(digest);
 ```
 
 Our API is capable of stamping **SHA3-512** hashes directly.
@@ -183,6 +195,25 @@ end
 data = File.read "/path/to/file.txt"
 digest = stampery.hash data
 stampery.stamp digest
+```
+```java
+// the following code should be inside a class that implements our Consumer interface
+public void onProof(String hash, Proof proof) {
+    System.out.println(hash);
+    System.out.println(proof);
+}
+
+public void onReady() {
+  String file = "";
+  try{
+  	file = new String(Files.readAllBytes(Paths.get("/path/to/file.txt")));
+  }catch(IOException e){
+  	e.printStackTrace();
+  }
+
+  String digest = stampery.hash(file);
+  stampery.stamp(digest);
+}
 ```
 
 Stamping a file is just as easy as obtaining its **SHA3-512** hash and then stamping the hash as explained in the previous section.
