@@ -359,7 +359,7 @@ html, body {
     font-size: 30px;
     padding-top: 0.5em;
     padding-bottom: 0.5em;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #CCC;
     margin-bottom: $h1-margin-bottom;
     margin-top: 2em;
     border-top: 1px solid #ddd;
@@ -417,7 +417,7 @@ html, body {
 
     th {
       padding: 5px 10px;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #CCC;
       vertical-align: bottom;
     }
 
@@ -426,7 +426,7 @@ html, body {
     }
 
     tr:last-child {
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #CCC;
     }
 
     tr:nth-child(odd)>td {
@@ -543,7 +543,7 @@ html, body {
     a {
       color: #fff;
       text-decoration: none;
-      border-bottom: dashed 1px #ccc;
+      border-bottom: dashed 1px #CCC;
     }
   }
 
@@ -635,15 +635,15 @@ body{
 }
 
 .tocify-wrapper{
-  background-color: #4386C9;
-  background-image: linear-gradient(-122deg, #1171CA 2%, #4386C9 91%);
+  background-color: #FFCC00;
+  background-image: linear-gradient(-122deg, #333333 2%, #555555 91%);
   border-right: 1px solid #D5D5D5;
 }
 
 .logo_container{
   width: 100%;
   height: 80px;
-  background-color: #2A669E;
+  background-color: #2C3844;
   text-align: center;
   line-height: 80px;
   position: relative;
@@ -653,11 +653,11 @@ body{
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-55%) translateY(-50%);
 }
 
 .tocify-wrapper>.search:before {
-    color: #2A669E;
+    color: #333333;
     top: 11px;
 }
 
@@ -665,7 +665,7 @@ body{
     margin: 0;
     width: 100%;
     padding : 10px 10px 10px 37px;
-    color : #2A669E;
+    color : #333333;
     background-color: #fff;
 }
 
@@ -676,7 +676,7 @@ body{
 
 .tocify-wrapper .tocify-item>a{
   font-weight: normal;
-  color: #BBD6EF;
+  color: #EEEEEE;
 }
 
 .tocify-wrapper .tocify-item.tocify-focus>a{
@@ -701,7 +701,7 @@ body{
 }
 
 #toc ul li{
-    box-shadow: 0px 1px 0px #669BCC;
+    box-shadow: 0px 1px 0px #888;
 }
 
 .tocify-wrapper .toc-footer{
@@ -709,7 +709,7 @@ body{
 }
 
 .tocify-wrapper .tocify-subheader{
-  background: #2A669E !important;
+  background: #333333 !important;
 }
 
 .page-wrapper .dark-box{
@@ -720,11 +720,13 @@ a.signup{
   text-align: center;
   width: 100%;
   display: block;
-  background: #fff;
+  background: white;
   border-radius: 5px;
   padding: 10px 0;
-  color: #2470B7 !important;
+  color: #2C3844 !important;
   text-transform: uppercase;
+  font-size: 1.2em;
+  cursor: pointer;
 }
 
 .lang-selector{

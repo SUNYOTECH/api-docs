@@ -10,7 +10,7 @@ language_tabs:
   - ruby
 
 toc_footers:
-  - <a href='https://api-dashboard.stampery.com' target="_blank" class='signup'>Sign up to Stampery</a>
+  - <a href='https://api-dashboard.stampery.com/signup' target="_blank" class='signup'>Sign up</a>
   - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
@@ -20,20 +20,25 @@ search: true
 ---
 
 # Introduction
-> You can get the latest version of **Stampery API** wrapper for your preferred language:
+> You can get the latest version of the **Stampery API** client library for your preferred language on GitHub:
 
 > - Node.js → [https://github.com/stampery/node](https://github.com/stampery/node)
-> - PHP → [https://github.com/stampery/php](https://github.com/stampery/php)
+> - PHP     → [https://github.com/stampery/php](https://github.com/stampery/php)
 > - Python  → [https://github.com/stampery/python](https://github.com/stampery/python)
-> - Elixir  → [https://github.com/stampery/elixir](https://github.com/stampery/elixir)
 > - Ruby    → [https://github.com/stampery/ruby](https://github.com/stampery/ruby)
+> - Elixir  → [https://github.com/stampery/elixir](https://github.com/stampery/elixir)
+> - Java    → [https://github.com/stampery/java](https://github.com/stampery/java)
 
 
-This is the documentation for version 3 of the **Stampery public API**.
+This is the documentation for version 3 of the **Stampery API**, the industrial-scale data certification platform.
 
-We have just released a Node.js language binding, but PHP, Python, Elixir and other ones are coming soon!
+With the Stampery API you can certify a virtually **unlimited** amount of datasets or files by embedding their unique identifiers into both the **Bitcoin** and **Ethereum** public blockchains.
 
-You can view code examples in the dark area to the right, and switch the programming language of the examples with the tabs in the top right.
+For every certification and blockchain, you get a receipt document called **proof** that allows you to prove the timestamped **existence**, **integrity** and **ownership** of the certified data.
+
+Client libraries are available for **NodeJS**, **PHP**, **Python**, **Ruby**, **Elixir** and **Java**.
+
+You can view code examples across this documentation in the dark area to the right, and switch between different programming languages with the tabs in the top right.
 
 # Authentication
 ```javascript
@@ -63,6 +68,8 @@ stampery = Client.new '2d4cdee7-38b0-4a66-da87-c1ab05b43768'
 Authentication is performed by using app-specific **secret tokens**.
 
 You can generate your own secret tokens from the [API dashboard](https://api-dashboard.stampery.com).
+
+<aside class="info">As a rule of thumb, you should use a single token for every application using our API. If you are running a distributed application, you should also use a different token for every instance or otherwise you may miss some proofs.</aside>
 
 # Stamping
 
@@ -107,9 +114,9 @@ stampery.stamp digest
 
 Our API is capable of stamping **SHA3-512** hashes directly.
 
-<aside class="info"><strong>SHA3</strong>, a subset of <strong>Keccak</strong>, is the last version of the SHA family of cryptographic hash functions.<br />Our API uses a <strong>512</strong> bits output size, so the hexadecimal digest of all hashes will have a length of 128 characters.</aside>
-
 For stamping a SHA3-512 hash, you only have to make a call to the ``stamp`` method of our API, as seen in the examples to the right.
+
+<aside class="info"><strong>SHA3</strong>, a subset of <strong>Keccak</strong>, is the last version of the SHA family of cryptographic hash functions.<br />Our API uses a <strong>512</strong> bits output size, so the hexadecimal digest of all hashes will have a length of 128 characters.</aside>
 
 ## Stamping a file
 ```javascript
@@ -178,11 +185,17 @@ digest = stampery.hash data
 stampery.stamp digest
 ```
 
-Stamping a file is as easy as obtaining its **SHA3-512** hash and then stamping the hash as explained in the previous section.
+Stamping a file is just as easy as obtaining its **SHA3-512** hash and then stamping the hash as explained in the previous section.
 
-For your convenience, all our language bindings include a function for hashing files as seen in the examples to the right.
+For your convenience, all our client libraries include a function for hashing files as seen in the examples to the right.
 
 # Proofs
+
+## About proofs
+
+Proofs are **JSON** documents proving that a certain file or dataset has been anchored to a certain public blockchain.
+
+Anyone holding the original data and its corresponding proof can verify the certification by following the proving process described <a href="#checking-a-proof-proving">here</a>.
 
 ## Proof format
 This is the structure of a proof:
@@ -267,11 +280,11 @@ prove = (hash, siblings, root) ->
 
 console.log prove(digest, s, r) and 'Valid!' and 'Wrong!'
 ```
-We call **proving** to the process of verifying a proof is valid and therefore demonstrating a hash or file has been undoubtfully embedded in the blockchain and it has not been tampered since then.
+We call **proving** to the process of verifying a proof is valid and therefore demonstrating that a hash or file has been undoubtfully embedded in the blockchain and it has not been tampered since then.
 
 Proofs are independently verifiable by everyone in possesion of the hash or file and the proof itself.
 
-For Stampery proofs made with the current version 5 of our BTA platform, the process of proving is made like this:
+The process of proving Stampery proofs made with the current version 5 of our BTA platform is made like this:
 
 1. Take the hash
 2. Take first element in the Merkle siblings list `s[0]`
