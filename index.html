@@ -13,7 +13,7 @@
 
       <script>
         $(function() {
-          setupLanguages(["javascript","coffeescript","php","python","elixir","ruby"]);
+          setupLanguages(["javascript","coffeescript","php","python","elixir","ruby","java"]);
         });
       </script>
     <script>
@@ -47,6 +47,7 @@
               <a href="#" data-language-name="python">python</a>
               <a href="#" data-language-name="elixir">elixir</a>
               <a href="#" data-language-name="ruby">ruby</a>
+              <a href="#" data-language-name="java">java</a>
         </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
@@ -55,7 +56,7 @@
       <div id="toc">
       </div>
         <ul class="toc-footer">
-            <li><a href='https://api-dashboard.stampery.com/signup' target="_blank" class='signup'>Sign up</a></li>
+            <li><a href='https://api-dashboard.stampery.com' target="_blank" class='signup'>Sign up to Stampery</a></li>
             <li><a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
         </ul>
     </div>
@@ -65,27 +66,23 @@
         <h1 id="introduction">Introduction</h1>
 
 <blockquote>
-<p>You can get the latest version of the <strong>Stampery API</strong> client library for your preferred language on GitHub:</p>
+<p>You can get the latest version of <strong>Stampery API</strong> wrapper for your preferred language:</p>
 
 <ul>
 <li>Node.js → <a href="https://github.com/stampery/node">https://github.com/stampery/node</a></li>
-<li>PHP     → <a href="https://github.com/stampery/php">https://github.com/stampery/php</a></li>
+<li>PHP → <a href="https://github.com/stampery/php">https://github.com/stampery/php</a></li>
 <li>Python  → <a href="https://github.com/stampery/python">https://github.com/stampery/python</a></li>
-<li>Ruby    → <a href="https://github.com/stampery/ruby">https://github.com/stampery/ruby</a></li>
 <li>Elixir  → <a href="https://github.com/stampery/elixir">https://github.com/stampery/elixir</a></li>
-<li>Java    → <a href="https://github.com/stampery/java">https://github.com/stampery/java</a></li>
+<li>Ruby    → <a href="https://github.com/stampery/ruby">https://github.com/stampery/ruby</a></li>
+<li>Java → <a href="https://github.com/stampery/java">https://github.com/stampery/java</a></li>
 </ul>
 </blockquote>
 
-<p>This is the documentation for version 3 of the <strong>Stampery API</strong>, the industrial-scale data certification platform.</p>
+<p>This is the documentation for version 3 of the <strong>Stampery public API</strong>.</p>
 
-<p>With the Stampery API you can certify a virtually <strong>unlimited</strong> amount of datasets or files by embedding their unique identifiers into both the <strong>Bitcoin</strong> and <strong>Ethereum</strong> public blockchains.</p>
+<p>We have just released a Node.js language binding, but PHP, Python, Elixir and other ones are coming soon!</p>
 
-<p>For every certification and blockchain, you get a receipt document called <strong>proof</strong> that allows you to prove the timestamped <strong>existence</strong>, <strong>integrity</strong> and <strong>ownership</strong> of the certified data.</p>
-
-<p>Client libraries are available for <strong>NodeJS</strong>, <strong>PHP</strong>, <strong>Python</strong>, <strong>Ruby</strong>, <strong>Elixir</strong> and <strong>Java</strong>.</p>
-
-<p>You can view code examples across this documentation in the dark area to the right, and switch between different programming languages with the tabs in the top right.</p>
+<p>You can view code examples in the dark area to the right, and switch the programming language of the examples with the tabs in the top right.</p>
 
 <h1 id="authentication">Authentication</h1>
 <pre class="highlight javascript"><code><span class="nx">stampery</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Stampery</span><span class="p">(</span><span class="s1">'367c6ec2-5791-4cf5-8094-4bae00c639b4'</span><span class="p">);</span>
@@ -105,12 +102,16 @@
 <pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'stampery'</span>
 <span class="n">stampery</span> <span class="o">=</span> <span class="no">Client</span><span class="p">.</span><span class="nf">new</span> <span class="s1">'2d4cdee7-38b0-4a66-da87-c1ab05b43768'</span>
 </code></pre>
+<pre class="highlight java"><code><span class="kn">import</span> <span class="nn">com.stampery.Stampery</span><span class="o">;</span>
+
+<span class="n">Stampery</span> <span class="n">stampery</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Stampery</span><span class="o">(</span><span class="s">"2d4cdee7-38b0-4a66-da87-c1ab05b43768"</span><span class="o">);</span>
+<span class="n">stampery</span><span class="o">.</span><span class="na">subscribe</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>      
+<span class="n">stampery</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+</code></pre>
 
 <p>Authentication is performed by using app-specific <strong>secret tokens</strong>.</p>
 
 <p>You can generate your own secret tokens from the <a href="https://api-dashboard.stampery.com">API dashboard</a>.</p>
-
-<aside class="info">As a rule of thumb, you should use a single token for every application using our API. If you are running a distributed application, you should also use a different token for every instance or otherwise you may miss some proofs.</aside>
 
 <h1 id="stamping">Stamping</h1>
 
@@ -146,12 +147,15 @@ D0E71A16FF4DED1CB4BC6AC2E4BBB572\
 <pre class="highlight ruby"><code><span class="n">digest</span> <span class="o">=</span> <span class="s2">"0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"</span>
 <span class="n">stampery</span><span class="p">.</span><span class="nf">stamp</span> <span class="n">digest</span>
 </code></pre>
+<pre class="highlight java"><code><span class="n">String</span> <span class="n">digest</span> <span class="o">=</span> <span class="s">"0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"</span><span class="o">;</span>
+<span class="n">stampery</span><span class="o">.</span><span class="na">stamp</span><span class="o">(</span><span class="n">digest</span><span class="o">);</span>
+</code></pre>
 
 <p>Our API is capable of stamping <strong>SHA3-512</strong> hashes directly.</p>
 
-<p>For stamping a SHA3-512 hash, you only have to make a call to the <code class="prettyprint">stamp</code> method of our API, as seen in the examples to the right.</p>
-
 <aside class="info"><strong>SHA3</strong>, a subset of <strong>Keccak</strong>, is the last version of the SHA family of cryptographic hash functions.<br />Our API uses a <strong>512</strong> bits output size, so the hexadecimal digest of all hashes will have a length of 128 characters.</aside>
+
+<p>For stamping a SHA3-512 hash, you only have to make a call to the <code class="prettyprint">stamp</code> method of our API, as seen in the examples to the right.</p>
 
 <h2 id="stamping-a-file">Stamping a file</h2>
 <pre class="highlight javascript"><code><span class="nx">stampery</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'proof'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">proof</span><span class="p">)</span> <span class="p">{</span>
@@ -213,18 +217,30 @@ D0E71A16FF4DED1CB4BC6AC2E4BBB572\
 <span class="n">digest</span> <span class="o">=</span> <span class="n">stampery</span><span class="p">.</span><span class="nf">hash</span> <span class="n">data</span>
 <span class="n">stampery</span><span class="p">.</span><span class="nf">stamp</span> <span class="n">digest</span>
 </code></pre>
+<pre class="highlight java"><code><span class="c1">// the following code should be inside a class that implements our Consumer interface</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onProof</span><span class="p">(</span><span class="n">String</span> <span class="n">hash</span><span class="o">,</span> <span class="n">Proof</span> <span class="n">proof</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">hash</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">proof</span><span class="o">);</span>
+<span class="o">}</span>
 
-<p>Stamping a file is just as easy as obtaining its <strong>SHA3-512</strong> hash and then stamping the hash as explained in the previous section.</p>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onReady</span><span class="p">(</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">String</span> <span class="n">file</span> <span class="o">=</span> <span class="s">""</span><span class="o">;</span>
+  <span class="k">try</span><span class="o">{</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">Files</span><span class="o">.</span><span class="na">readAllBytes</span><span class="o">(</span><span class="n">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"/path/to/file.txt"</span><span class="o">)));</span>
+  <span class="o">}</span><span class="k">catch</span><span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">){</span>
+    <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+  <span class="o">}</span>
 
-<p>For your convenience, all our client libraries include a function for hashing files as seen in the examples to the right.</p>
+  <span class="n">String</span> <span class="n">digest</span> <span class="o">=</span> <span class="n">stampery</span><span class="o">.</span><span class="na">hash</span><span class="o">(</span><span class="n">file</span><span class="o">)</span>
+  <span class="n">stampery</span><span class="o">.</span><span class="na">stamp</span><span class="o">(</span><span class="n">digest</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+
+<p>Stamping a file is as easy as obtaining its <strong>SHA3-512</strong> hash and then stamping the hash as explained in the previous section.</p>
+
+<p>For your convenience, all our language bindings include a function for hashing files as seen in the examples to the right.</p>
 
 <h1 id="proofs">Proofs</h1>
-
-<h2 id="about-proofs">About proofs</h2>
-
-<p>Proofs are <strong>JSON</strong> documents proving that a certain file or dataset has been anchored to a certain public blockchain.</p>
-
-<p>Anyone holding the original data and its corresponding proof can verify the certification by following the proving process described <a href="#checking-a-proof-proving">here</a>.</p>
 
 <h2 id="proof-format">Proof format</h2>
 
@@ -345,11 +361,11 @@ D0E71A16FF4DED1CB4BC6AC2E4BBB572\
 <span class="nx">console</span><span class="p">.</span><span class="na">log</span> <span class="nx">prove</span><span class="p">(</span><span class="nx">digest</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span> <span class="o">and</span> <span class="s">'Valid!'</span> <span class="o">and</span> <span class="s">'Wrong!'</span>
 </code></pre>
 
-<p>We call <strong>proving</strong> to the process of verifying a proof is valid and therefore demonstrating that a hash or file has been undoubtfully embedded in the blockchain and it has not been tampered since then.</p>
+<p>We call <strong>proving</strong> to the process of verifying a proof is valid and therefore demonstrating a hash or file has been undoubtfully embedded in the blockchain and it has not been tampered since then.</p>
 
 <p>Proofs are independently verifiable by everyone in possesion of the hash or file and the proof itself.</p>
 
-<p>The process of proving Stampery proofs made with the current version 5 of our BTA platform is made like this:</p>
+<p>For Stampery proofs made with the current version 5 of our BTA platform, the process of proving is made like this:</p>
 
 <ol>
 <li>Take the hash</li>
@@ -375,6 +391,7 @@ D0E71A16FF4DED1CB4BC6AC2E4BBB572\
                 <a href="#" data-language-name="python">python</a>
                 <a href="#" data-language-name="elixir">elixir</a>
                 <a href="#" data-language-name="ruby">ruby</a>
+                <a href="#" data-language-name="java">java</a>
           </div>
       </div>
     </div>
