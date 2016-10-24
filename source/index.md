@@ -208,8 +208,8 @@ stampery.stamp digest
 ```java
 // the following code should be inside a class that implements our Consumer interface
 public void onProof(String hash, Proof proof) {
-    System.out.println(hash);
-    System.out.println(proof);
+  System.out.println(hash);
+  System.out.println(proof);
 }
 
 public void onReady() {
@@ -226,25 +226,25 @@ public void onReady() {
 ```
 ```go
 for event := range events {
-		switch event.Type {
-		case "ready":
-      data, err := ioutil.ReadFile("/path/to/file.txt")
-      if err != nil {
-      	log.Fatalf("Error %v\n", err)
-      }
-      digest := stampery.Hash(string(data))
-      stampery.Stamp(digest)
-      
-    case "proof":
-		fmt.Println("\nProof")
-		p := event.Data.(stampery.Proof)
-		fmt.Println("Hash: ", p.Hash)
-		fmt.Printf("Version: %v\nSiblings: %v\nRoot: %v\n", p.Version, p.Siblings, p.Root)
-		fmt.Printf("Anchor:\n  Chain: %v\n  Tx: %v\n", p.Anchor.Chain, p.Anchor.Tx)
+  switch event.Type {
+  case "ready":
+    data, err := ioutil.ReadFile("/path/to/file.txt")
+    if err != nil {
+    	log.Fatalf("Error %v\n", err)
+    }
+    digest := stampery.Hash(string(data))
+    stampery.Stamp(digest)
 
-	case "error":
-		log.Fatalf("%v\n", event.Data)
-	}
+  case "proof":
+  	fmt.Println("\nProof")
+  	p := event.Data.(stampery.Proof)
+  	fmt.Println("Hash: ", p.Hash)
+  	fmt.Printf("Version: %v\nSiblings: %v\nRoot: %v\n", p.Version, p.Siblings, p.Root)
+  	fmt.Printf("Anchor:\n  Chain: %v\n  Tx: %v\n", p.Anchor.Chain, p.Anchor.Tx)
+
+  case "error":
+  	log.Fatalf("%v\n", event.Data)
+  }
 }
 ```
 
