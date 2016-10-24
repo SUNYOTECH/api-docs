@@ -13,7 +13,7 @@
 
       <script>
         $(function() {
-          setupLanguages(["javascript","coffeescript","php","python","elixir","ruby","java"]);
+          setupLanguages(["javascript","coffeescript","php","python","elixir","ruby","java","go"]);
         });
       </script>
     <script>
@@ -48,6 +48,7 @@
               <a href="#" data-language-name="elixir">elixir</a>
               <a href="#" data-language-name="ruby">ruby</a>
               <a href="#" data-language-name="java">java</a>
+              <a href="#" data-language-name="go">go</a>
         </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
@@ -75,6 +76,7 @@
 <li>Ruby    → <a href="https://github.com/stampery/ruby">https://github.com/stampery/ruby</a></li>
 <li>Elixir  → <a href="https://github.com/stampery/elixir">https://github.com/stampery/elixir</a></li>
 <li>Java    → <a href="https://github.com/stampery/java">https://github.com/stampery/java</a></li>
+<li>Go    → <a href="https://github.com/stampery/go">https://github.com/stampery/go</a></li>
 </ul>
 </blockquote>
 
@@ -112,6 +114,8 @@
 <span class="n">stampery</span><span class="o">.</span><span class="na">subscribe</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>      
 <span class="n">stampery</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
 </code></pre>
+<pre class="highlight go"><code><span class="n">events</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">stampery</span><span class="o">.</span><span class="n">Login</span><span class="p">(</span><span class="s">"2d4cdee7-38b0-4a66-da87-c1ab05b43768"</span><span class="p">)</span><span class="x">
+</span></code></pre>
 
 <p>Authentication is performed by using app-specific <strong>secret tokens</strong>.</p>
 
@@ -156,6 +160,9 @@ D0E71A16FF4DED1CB4BC6AC2E4BBB572\
 <pre class="highlight java"><code><span class="n">String</span> <span class="n">digest</span> <span class="o">=</span> <span class="s">"0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"</span><span class="o">;</span>
 <span class="n">stampery</span><span class="o">.</span><span class="na">stamp</span><span class="o">(</span><span class="n">digest</span><span class="o">);</span>
 </code></pre>
+<pre class="highlight go"><code><span class="n">digest</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="s">"0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"</span><span class="x">
+</span><span class="n">stampery</span><span class="o">.</span><span class="n">Stamp</span><span class="p">(</span><span class="n">digest</span><span class="p">)</span><span class="x">
+</span></code></pre>
 
 <p>Our API is capable of stamping <strong>SHA3-512</strong> hashes directly.</p>
 
@@ -241,6 +248,28 @@ D0E71A16FF4DED1CB4BC6AC2E4BBB572\
   <span class="n">stampery</span><span class="o">.</span><span class="na">stamp</span><span class="o">(</span><span class="n">digest</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre>
+<pre class="highlight go"><code><span class="k">for</span><span class="x"> </span><span class="n">event</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="k">range</span><span class="x"> </span><span class="n">events</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="k">switch</span><span class="x"> </span><span class="n">event</span><span class="o">.</span><span class="n">Type</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="k">case</span><span class="x"> </span><span class="s">"ready"</span><span class="o">:</span><span class="x">
+      </span><span class="n">data</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ioutil</span><span class="o">.</span><span class="n">ReadFile</span><span class="p">(</span><span class="s">"/path/to/file.txt"</span><span class="p">)</span><span class="x">
+      </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+        </span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"Error %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="p">)</span><span class="x">
+      </span><span class="p">}</span><span class="x">
+      </span><span class="n">digest</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">stampery</span><span class="o">.</span><span class="n">Hash</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">data</span><span class="p">))</span><span class="x">
+      </span><span class="n">stampery</span><span class="o">.</span><span class="n">Stamp</span><span class="p">(</span><span class="n">digest</span><span class="p">)</span><span class="x">
+
+    </span><span class="k">case</span><span class="x"> </span><span class="s">"proof"</span><span class="o">:</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">Proof"</span><span class="p">)</span><span class="x">
+        </span><span class="n">p</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">event</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="p">(</span><span class="n">stampery</span><span class="o">.</span><span class="n">Proof</span><span class="p">)</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Hash: "</span><span class="p">,</span><span class="x"> </span><span class="n">p</span><span class="o">.</span><span class="n">Hash</span><span class="p">)</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Version: %v</span><span class="se">\n</span><span class="s">Siblings: %v</span><span class="se">\n</span><span class="s">Root: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">p</span><span class="o">.</span><span class="n">Version</span><span class="p">,</span><span class="x"> </span><span class="n">p</span><span class="o">.</span><span class="n">Siblings</span><span class="p">,</span><span class="x"> </span><span class="n">p</span><span class="o">.</span><span class="n">Root</span><span class="p">)</span><span class="x">
+        </span><span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Anchor:</span><span class="se">\n</span><span class="s">  Chain: %v</span><span class="se">\n</span><span class="s">  Tx: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">p</span><span class="o">.</span><span class="n">Anchor</span><span class="o">.</span><span class="n">Chain</span><span class="p">,</span><span class="x"> </span><span class="n">p</span><span class="o">.</span><span class="n">Anchor</span><span class="o">.</span><span class="n">Tx</span><span class="p">)</span><span class="x">
+
+    </span><span class="k">case</span><span class="x"> </span><span class="s">"error"</span><span class="o">:</span><span class="x">
+        </span><span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"%v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="x"> </span><span class="n">event</span><span class="o">.</span><span class="n">Data</span><span class="p">)</span><span class="x">
+    </span><span class="p">}</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
 
 <p>Stamping a file is just as easy as obtaining its <strong>SHA3-512</strong> hash and then stamping the hash as explained in the previous section.</p>
 
@@ -404,6 +433,7 @@ D0E71A16FF4DED1CB4BC6AC2E4BBB572\
                 <a href="#" data-language-name="elixir">elixir</a>
                 <a href="#" data-language-name="ruby">ruby</a>
                 <a href="#" data-language-name="java">java</a>
+                <a href="#" data-language-name="go">go</a>
           </div>
       </div>
     </div>
