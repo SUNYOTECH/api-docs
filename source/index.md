@@ -9,6 +9,7 @@ language_tabs:
   - elixir
   - ruby
   - java
+  - go
 
 toc_footers:
   - <a href='https://api-dashboard.stampery.com/signup' target="_blank" class='signup'>Sign up</a>
@@ -29,6 +30,7 @@ search: true
 > - Ruby    → [https://github.com/stampery/ruby](https://github.com/stampery/ruby)
 > - Elixir  → [https://github.com/stampery/elixir](https://github.com/stampery/elixir)
 > - Java    → [https://github.com/stampery/java](https://github.com/stampery/java)
+> - Go    → [https://github.com/stampery/go](https://github.com/stampery/go)
 
 
 This is the documentation for version 3 of the **Stampery API**, the industrial-scale data certification platform.
@@ -71,6 +73,9 @@ import com.stampery.Stampery;
 Stampery stampery = new Stampery("2d4cdee7-38b0-4a66-da87-c1ab05b43768");
 stampery.subscribe(this);      
 stampery.start();
+```
+```go
+events := stampery.Login("2d4cdee7-38b0-4a66-da87-c1ab05b43768")
 ```
 
 Authentication is performed by using app-specific **secret tokens**.
@@ -122,6 +127,10 @@ stampery.stamp digest
 ```java
 String digest = "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800";
 stampery.stamp(digest);
+```
+```go
+digest := "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"
+stampery.Stamp(digest)
 ```
 
 Our API is capable of stamping **SHA3-512** hashes directly.
@@ -213,6 +222,29 @@ public void onReady() {
 
   String digest = stampery.hash(file);
   stampery.stamp(digest);
+}
+```
+```go
+for event := range events {
+		switch event.Type {
+		case "ready":
+      data, err := ioutil.ReadFile("/path/to/file.txt")
+      if err != nil {
+      	log.Fatalf("Error %v\n", err)
+      }
+      digest := stampery.Hash(string(data))
+      stampery.Stamp(digest)
+      
+    case "proof":
+		fmt.Println("\nProof")
+		p := event.Data.(stampery.Proof)
+		fmt.Println("Hash: ", p.Hash)
+		fmt.Printf("Version: %v\nSiblings: %v\nRoot: %v\n", p.Version, p.Siblings, p.Root)
+		fmt.Printf("Anchor:\n  Chain: %v\n  Tx: %v\n", p.Anchor.Chain, p.Anchor.Tx)
+
+	case "error":
+		log.Fatalf("%v\n", event.Data)
+	}
 }
 ```
 
