@@ -39,7 +39,7 @@ With the Stampery API you can certify a virtually **unlimited** amount of datase
 
 For every certification and blockchain, you get a receipt document called **proof** that allows you to prove the timestamped **existence**, **integrity** and **ownership** of the certified data.
 
-Client libraries are available for **NodeJS**, **PHP**, **Python**, **Ruby**, **Elixir** and **Java**.
+Client libraries are available for **NodeJS**, **PHP**, **Python**, **Ruby**, **Elixir**, **Java** and **Go**.
 
 You can view code examples across this documentation in the dark area to the right, and switch between different programming languages with the tabs in the top right.
 
@@ -60,8 +60,20 @@ from stampery import Stampery
 client = Stampery('2d4cdee7-38b0-4a66-da87-c1ab05b43768', 'prod')
 ```
 ```elixir
-require Stampery
-Stampery.init "2d4cdee7-38b0-4a66-da87-c1ab05b43768"
+defmodule MyStampingModule do
+  use Stampery, {"2d4cdee7-38b0-4a66-da87-c1ab05b43768", :prod}
+
+  def on_ready do
+  end
+
+  def on_proof(proof) do
+  end
+
+  def on_error(error) do
+  end
+end
+
+MyStampingModule.start()
 ```
 ```ruby
 require 'stampery'
@@ -71,7 +83,7 @@ stampery = Client.new '2d4cdee7-38b0-4a66-da87-c1ab05b43768'
 import com.stampery.Stampery;
 
 Stampery stampery = new Stampery("2d4cdee7-38b0-4a66-da87-c1ab05b43768");
-stampery.subscribe(this);      
+stampery.subscribe(this);
 stampery.start();
 ```
 ```go
@@ -80,19 +92,52 @@ events := stampery.Login("2d4cdee7-38b0-4a66-da87-c1ab05b43768")
 
 Authentication is performed by using app-specific **secret tokens**.
 
-You can generate your own secret tokens from the [API dashboard](https://api-dashboard.stampery.com).
+You can signup and generate your own secret tokens with the [API dashboard](https://api-dashboard.stampery.com).
 
 <aside class="info">As a rule of thumb, you should use a single token for every application using our API. If you are running a distributed application, you should also use a different token for every instance or otherwise you may miss some proofs.</aside>
+
+# Hashing
+
+For your convenience, all our client libraries provide a hash function that takes any kind of string and directly outputs a hash digest ready to stamp.
+
+## Hashing
+```javascript
+stampery.hash("Hello world!", function(hash) {
+  console.log(hash);
+});
+```
+```coffeescript
+stampery.hash "Hello world!", (hash) ->
+  console.log hash
+```
+```php
+<?
+$digest = $stampery->hash("Hello world!");
+echo(hash);
+```
+```python
+digest = client.hash("Hello world!")
+print(digest)
+```
+```elixir
+digest = MyStampingModule.hash("Hello world!")
+IO.puts digest
+```
+```ruby
+digest = stampery.hash "Hello world!"
+
+```
+```java
+digest = stampery.hash("Hello world!");
+```
+```go
+digest := stampery.Hash("Hello world!")
+```
 
 # Stamping
 
 ## Stamping a hash
 ```javascript
-var digest = '0989551C2CCE109F40BE2C8AD711E23A\
-539445C93547DFC13D25F9E8147886B8\
-D0E71A16FF4DED1CB4BC6AC2E4BBB572\
-2F0996B24F79FC849531FE70BB2DE800';
-
 stampery.on('proof', function(hash, proof) {
   console.log('Received proof for hash ' + hash, proof);
 });
@@ -100,8 +145,6 @@ stampery.on('proof', function(hash, proof) {
 stampery.hash(digest);
 ```
 ```coffeescript
-digest = '0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800'
-
 stampery.on 'proof', (hash, proof) ->
   console.log "Received proof for hash #{hash}", proof
 
@@ -109,31 +152,25 @@ stampery.stamp digest
 ```
 ```php
 <?
-$digest = 'A69F73CCA23A9AC5C8B567DC185A756E97C982164FE25859E0D1DCC1475C80A615B2123AF1F5F94C11E3E9402C3AC558F500199D95B6D3E301758586281DCD26';
 $stampery->stamp($digest);
 ```
 ```python
-digest = "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"
 client.stamp(digest)
 ```
 ```elixir
-digest = "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"
 Stampery.stamp digest
 ```
 ```ruby
-digest = "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"
 stampery.stamp digest
 ```
 ```java
-String digest = "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800";
 stampery.stamp(digest);
 ```
 ```go
-digest := "0989551C2CCE109F40BE2C8AD711E23A539445C93547DFC13D25F9E8147886B8D0E71A16FF4DED1CB4BC6AC2E4BBB5722F0996B24F79FC849531FE70BB2DE800"
 stampery.Stamp(digest)
 ```
 
-Our API is capable of stamping **SHA3-512** hashes directly.
+Our API is capable of stamping **SHA3-512 (FIPS-202)** hashes directly.
 
 For stamping a SHA3-512 hash, you only have to make a call to the ``stamp`` method of our API, as seen in the examples to the right.
 
@@ -160,12 +197,7 @@ fs.readFile '/etc/hosts', 'utf8', (err, data) ->
 <?
 $stampery.on('proof', function(hash, proof){
  echo("Received proof for hash" . $hash . "\n");
- echo("Protocol version: " . $proof[0] . "\n");
- echo("Merkle siblings:"\n");
- var_dump($proof[1]);
- echo("Merkle root: " . $proof[2] . "\n");
- echo("Blockchain: " . array('Bitcoin', 'Ethereum')[$proof[3][0]] . "\n");
- echo("Transaction ID: " . $proof[3][1] . "\n");
+ var_dump($proof);
 });
 
 $file = file_get_contents('/path/to/file.txt');
@@ -174,9 +206,7 @@ $stampery->stamp($digest);
 ```
 ```python
 def on_proof(hash, proof):
-    print("Received proof for")
-    print(hash)
-    print("Proof")
+    print("Received proof for " + hash)
     print(proof)
 
 file = open("/path/to/file.txt")
@@ -184,14 +214,18 @@ digest = client.hash(file.read())
 client.stamp(digest)
 ```
 ```elixir
-Stampery.on :proof, fn [hash, proof] ->
-    IO.puts "\nReceived proof for \n#{hash} \n\nProof"
-    IO.inspect proof
+defmodule MyStampingModule do
+  use Stampery, {"2d4cdee7-38b0-4a66-da87-c1ab05b43768", :prod}
+
+  def on_proof(proof) do
+    IO.puts("Received proof for hash #{inspect proof.hash}")
+    IO.inspect(proof)
+  end
 end
 
-{:ok, data} = File.read "/path/to/file.txt"
-digest = Stampery.hash data
-Stampery.stamp digest
+{:ok, data} = File.read("/path/to/file.txt")
+digest = Stampery.hash(data)
+MyStampingModule.stamp(digest)
 ```
 ```ruby
 stampery.on :proof do |hash, proof|
@@ -215,9 +249,9 @@ public void onProof(String hash, Proof proof) {
 public void onReady() {
   String file = "";
   try{
-  	file = new String(Files.readAllBytes(Paths.get("/path/to/file.txt")));
+    file = new String(Files.readAllBytes(Paths.get("/path/to/file.txt")));
   }catch(IOException e){
-  	e.printStackTrace();
+    e.printStackTrace();
   }
 
   String digest = stampery.hash(file);
@@ -230,20 +264,20 @@ for event := range events {
   case "ready":
     data, err := ioutil.ReadFile("/path/to/file.txt")
     if err != nil {
-    	log.Fatalf("Error %v\n", err)
+      log.Fatalf("Error %v\n", err)
     }
     digest := stampery.Hash(string(data))
     stampery.Stamp(digest)
 
   case "proof":
-  	fmt.Println("\nProof")
-  	p := event.Data.(stampery.Proof)
-  	fmt.Println("Hash: ", p.Hash)
-  	fmt.Printf("Version: %v\nSiblings: %v\nRoot: %v\n", p.Version, p.Siblings, p.Root)
-  	fmt.Printf("Anchor:\n  Chain: %v\n  Tx: %v\n", p.Anchor.Chain, p.Anchor.Tx)
+    fmt.Println("\nProof")
+    p := event.Data.(stampery.Proof)
+    fmt.Println("Hash: ", p.Hash)
+    fmt.Printf("Version: %v\nSiblings: %v\nRoot: %v\n", p.Version, p.Siblings, p.Root)
+    fmt.Printf("Anchor:\n  Chain: %v\n  Tx: %v\n", p.Anchor.Chain, p.Anchor.Tx)
 
   case "error":
-  	log.Fatalf("%v\n", event.Data)
+    log.Fatalf("%v\n", event.Data)
   }
 }
 ```
@@ -302,46 +336,16 @@ Don't worry, **missed proofs are queued in our servers for 24h**, and you can re
 
 ## Checking a proof (proving)
 ```javascript
-var mix = function (a, b) {
-  if (b > a){
-    [a, b] = [b, a];
-  }
-  sha3 = new (SHA3.SHA3Hash)();
-  sha3.update(data);
-  return sha3.digest('hex').toUpperCase();
-}
-
-var prove = function (hash, siblings, root) {
-  if (siblings.length > 0) {
-    head = siblings[0];
-    tail = siblings.slice(1);
-    hash = mix(hash, head);
-    return prove(hash, tail, root);
-  } else {
-    return hash == root
-  }
-}
-
-console.log(prove(digest, s, r) && 'Valid!' && 'Wrong!');
+stampery.prove(hash, proof, function (valid) {
+  console.log('Proof validity:', valid);
+});
 ```
 ```coffeescript
-mix = (a, b) ->
-  if b > a
-    [a, b] = [b, a]
-  sha3 = new (SHA3.SHA3Hash)
-  sha3.update data
-  sha3.digest('hex').toUpperCase()
-
-prove = (hash, siblings, root) ->
-  if siblings.length > 0
-    head = siblings[0]
-    tail = siblings.slice(1)
-    hash = mix(hash, head)
-    prove hash, tail, root
-  else
-    hash == root
-
-console.log prove(digest, s, r) and 'Valid!' and 'Wrong!'
+stampery.prove hash, proof, (valid) ->
+  console.log 'Proof validity:', valid
+```
+```elixir
+MyStampingModule.prove(proof)
 ```
 We call **proving** to the process of verifying a proof is valid and therefore demonstrating that a hash or file has been undoubtfully embedded in the blockchain and it has not been tampered since then.
 
