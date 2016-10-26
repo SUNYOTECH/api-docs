@@ -90,6 +90,8 @@
 
 <p>You can view code examples across this documentation in the dark area to the right, and switch between different programming languages with the tabs in the top right.</p>
 
+<aside class="warning">Although this document serves as a general reference for the methods available in our client libraries, please refer to the GitHub repository of every of them (linked on the right side) for more thorough specifications and ready-to-run examples.</aside>
+
 <h1 id="authentication">Authentication</h1>
 <pre class="highlight javascript"><code><span class="nx">stampery</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Stampery</span><span class="p">(</span><span class="s1">'367c6ec2-5791-4cf5-8094-4bae00c639b4'</span><span class="p">);</span>
 </code></pre>
@@ -136,10 +138,6 @@
 <aside class="info">As a rule of thumb, you should use a single token for every application using our API. If you are running a distributed application, you should also use a different token for every instance or otherwise you may miss some proofs.</aside>
 
 <h1 id="hashing">Hashing</h1>
-
-<p>For your convenience, all our client libraries provide a hash function that takes any kind of string and directly outputs a hash digest ready to stamp.</p>
-
-<h2 id="hashing">Hashing</h2>
 <pre class="highlight javascript"><code><span class="nx">stampery</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="s2">"Hello world!"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hash</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">hash</span><span class="p">);</span>
 <span class="p">});</span>
@@ -158,12 +156,13 @@
 <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="n">digest</span>
 </code></pre>
 <pre class="highlight ruby"><code><span class="n">digest</span> <span class="o">=</span> <span class="n">stampery</span><span class="p">.</span><span class="nf">hash</span> <span class="s2">"Hello world!"</span>
-
 </code></pre>
 <pre class="highlight java"><code><span class="n">digest</span> <span class="o">=</span> <span class="n">stampery</span><span class="o">.</span><span class="na">hash</span><span class="o">(</span><span class="s">"Hello world!"</span><span class="o">);</span>
 </code></pre>
 <pre class="highlight go"><code><span class="n">digest</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">stampery</span><span class="o">.</span><span class="n">Hash</span><span class="p">(</span><span class="s">"Hello world!"</span><span class="p">)</span><span class="x">
 </span></code></pre>
+
+<p>For your convenience, all our client libraries provide a hash function that takes any kind of string and directly outputs a ready to stamp hash digest.</p>
 
 <h1 id="stamping">Stamping</h1>
 
