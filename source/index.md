@@ -43,6 +43,8 @@ Client libraries are available for **NodeJS**, **PHP**, **Python**, **Ruby**, **
 
 You can view code examples across this documentation in the dark area to the right, and switch between different programming languages with the tabs in the top right.
 
+<aside class="warning">Although this document serves as a general reference for the methods available in our client libraries, please refer to the GitHub repository of every of them (linked on the right side) for more thorough specifications and ready-to-run examples.</aside>
+
 # Authentication
 ```javascript
 stampery = new Stampery('367c6ec2-5791-4cf5-8094-4bae00c639b4');
@@ -98,9 +100,6 @@ You can signup and generate your own secret tokens with the [API dashboard](http
 
 # Hashing
 
-For your convenience, all our client libraries provide a hash function that takes any kind of string and directly outputs a hash digest ready to stamp.
-
-## Hashing
 ```javascript
 stampery.hash("Hello world!", function(hash) {
   console.log(hash);
@@ -125,7 +124,6 @@ IO.puts digest
 ```
 ```ruby
 digest = stampery.hash "Hello world!"
-
 ```
 ```java
 digest = stampery.hash("Hello world!");
@@ -133,6 +131,8 @@ digest = stampery.hash("Hello world!");
 ```go
 digest := stampery.Hash("Hello world!")
 ```
+
+For your convenience, all our client libraries provide a hash function that takes any kind of string and directly outputs a ready to stamp hash digest.
 
 # Stamping
 
